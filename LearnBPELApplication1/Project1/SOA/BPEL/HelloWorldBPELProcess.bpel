@@ -1,0 +1,58 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<!--
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  Oracle JDeveloper BPEL Designer
+
+  Created: Wed Dec 04 16:59:30 IST 2024
+  Author:  ashwini_hotanahalli
+  Type: BPEL 2.0 Process
+  Purpose: Empty BPEL Process
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+-->
+<process name="HelloWorldBPELProcess"
+               targetNamespace="http://xmlns.oracle.com/LearnBPELApplication1/Project1/HelloWorldBPELProcess"
+               xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+               xmlns:client="http://xmlns.oracle.com/LearnBPELApplication1/Project1/HelloWorldBPELProcess"
+               xmlns:ora="http://schemas.oracle.com/xpath/extension"
+               xmlns:bpelx="http://schemas.oracle.com/bpel/extension"
+               xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:ns1="http://xmlns.oracle.com/LearnBPELApplication1/Project1/HelloWorldInterface"
+         xmlns:ns2="http://www.example.org/request" xmlns:ns3="http://www.example.org/response"
+         xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+         xmlns:bpm="http://xmlns.oracle.com/bpmn20/extensions"
+         xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+         xmlns:ess="http://xmlns.oracle.com/scheduler" xmlns:hwf="http://xmlns.oracle.com/bpel/workflow/xpath"
+         xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+         xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+         xmlns:bpws="http://schemas.xmlsoap.org/ws/2003/03/business-process/"
+         xmlns:xdk="http://schemas.oracle.com/bpel/extension/xpath/function/xdk"
+         xmlns:ids="http://xmlns.oracle.com/bpel/services/IdentityService/xpath"
+         xmlns:ldap="http://schemas.oracle.com/xpath/extension/ldap">
+
+  <!--
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+     ORCHESTRATION LOGIC
+     Set of activities coordinating the flow of messages across the
+     services integrated within this business process
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  -->
+  <partnerLinks>
+    <partnerLink name="HelloWorldOAPService" partnerLinkType="ns1:HelloWorldOAPService" myRole="HelloWorldPortType"/>
+  </partnerLinks>
+  <variables>
+    <variable name="HelloWorld_InputVariable" messageType="ns1:requestMessage"/>
+    <variable name="HelloWorld_OutputVariable" messageType="ns1:replyMessage"/>
+  </variables>
+  <sequence name="main">
+    <receive name="HelloWorldReceiver" createInstance="yes" partnerLink="HelloWorldOAPService"
+             portType="ns1:HelloWorldPortType" operation="HelloWorld" variable="HelloWorld_InputVariable"/>
+    <assign name="Assign1">
+      <copy>
+        <from>concat("Hi"," ",$HelloWorld_InputVariable.input/ns2:username)</from>
+        <to expressionLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0">$HelloWorld_OutputVariable.output/ns3:wish</to>
+      </copy>
+    </assign>
+    <reply name="HelloWorldReply" partnerLink="HelloWorldOAPService" variable="HelloWorld_OutputVariable"
+           portType="ns1:HelloWorldPortType" operation="HelloWorld"/>
+  </sequence>
+</process>
